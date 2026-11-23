@@ -1,22 +1,20 @@
 {
   "geral": [
     {
-      "id": "740e666e-a147-4f47-90a8-bb4df20c619b",
+      "id": "c1c090d7-5ebf-4188-a7d5-e6715c7b7fd7",
       "name": "Ygor",
-      "message": "oi",
+      "message": "",
+      "attachment": {
+        "id": "d28a2835-288b-478f-a3f6-42571fa53159",
+        "filename": "audio-1795451621391.webm",
+        "mime": "audio/webm",
+        "url": "/uploads/d28a2835-288b-478f-a3f6-42571fa53159"
+      },
+      "avatar": null,
       "roomId": "geral",
-      "time": "2026-11-23T13:31:59.033Z",
-      "senderId": "_AmB5tOATm5jILBkAAAA",
+      "time": "2026-11-23T16:33:43.837Z",
+      "senderId": "xM_Y2aFQnMf1I95aAAAC",
       "senderClientId": "b7a9b788-6843-41f6-be32-7f9b91b8128a"
-    },
-    {
-      "id": "9a25b271-dfc6-4df6-bb04-13096ed8623c",
-      "name": "Matheus",
-      "message": "Oi",
-      "roomId": "geral",
-      "time": "2026-11-23T13:32:48.360Z",
-      "senderId": "5D_0b2HJChESje7wAAAB",
-      "senderClientId": "user_v6heh9q27atl6lmh4o1qmjjaz4o7txq8o91w412sekhfnezpkk6qug"
     }
   ],
   "projetos": [],

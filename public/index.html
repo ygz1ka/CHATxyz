@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,33 +8,122 @@
   <title>Conecta | Chat Interno XYZ</title>
   <link rel="stylesheet" href="/style.css">
 </head>
+
 <body>
   <div class="app">
     <aside class="sidebar" id="sidebar">
-      <div class="brand"><div class="brand-icon">✦</div><div><strong>conecta<span>.</span></strong><small>WORKSPACE XYZ</small></div></div>
-      <div class="workspace"><div class="workspace-badge">X</div><div><strong>Empresa XYZ</strong><span>Espaço da equipe</span></div><span class="chevron">⌄</span></div>
+      <div class="brand">
+        <div class="brand-icon">✦</div>
+        <div><strong>conecta<span>.</span></strong><small>WORKSPACE XYZ</small></div>
+      </div>
+      <div class="workspace">
+        <div class="workspace-badge">X</div>
+        <div><strong>Empresa XYZ</strong><span>Espaço da equipe</span></div><span class="chevron">⌄</span>
+      </div>
       <div class="nav-heading"><span>CANAIS DE TEXTO</span><span>✦</span></div>
       <nav id="roomList" aria-label="Canais">
-        <button type="button" class="room active" data-room="geral"><span class="hash">#</span> geral <span class="room-dot"></span></button>
+        <button type="button" class="room active" data-room="geral"><span class="hash">#</span> geral <span
+            class="room-dot"></span></button>
         <button type="button" class="room" data-room="projetos"><span class="hash">#</span> projetos</button>
         <button type="button" class="room" data-room="avisos"><span class="hash">#</span> avisos</button>
       </nav>
       <div class="nav-heading private-heading"><span>CONVERSAS PRIVADAS</span><span>✉</span></div>
-      <div id="privateList" class="private-list"><span class="private-help">Selecione um usuário online para conversar.</span></div>
+      <div id="privateList" class="private-list"><span class="private-help">Selecione um usuário online para
+          conversar.</span></div>
+      <div class="nav-heading private-heading"><span>GRUPOS</span><button type="button" id="createGroup"
+          class="mini-action" title="Criar grupo">＋ Criar</button></div>
+      <div id="groupList" class="private-list"></div>
       <div class="sidebar-spacer"></div>
-      <div class="sidebar-note"><div class="note-icon">✧</div><strong>Feito para conectar.</strong><p>Seu espaço para compartilhar ideias e construir coisas incríveis juntos.</p></div>
-      <div class="profile"><div class="avatar profile-avatar" id="profileAvatar">?</div><div class="profile-info"><strong id="profileName">Visitante</strong><span><span class="online-dot"></span><span id="profileStatus">Conectando...</span></span></div><button type="button" class="edit-profile" id="editName" title="Trocar nome" aria-label="Trocar nome">✎</button></div>
+      <div class="sidebar-note">
+        <div class="note-icon">✧</div><strong>Feito para conectar.</strong>
+        <p>Seu espaço para compartilhar ideias e construir coisas incríveis juntos.</p>
+      </div>
+      <div class="profile">
+        <div class="avatar profile-avatar" id="profileAvatar">?</div>
+        <div class="profile-info"><strong id="profileName">Visitante</strong><span><span class="online-dot"></span><span
+              id="profileStatus">Conectando...</span></span></div><button type="button" class="edit-profile"
+          id="editName" title="Editar perfil" aria-label="Editar perfil">✎</button><button type="button"
+          class="edit-profile" id="editPhoto" title="Alterar foto de perfil"
+          aria-label="Alterar foto de perfil">📷</button>
+      </div>
     </aside>
     <main class="main">
-      <header class="topbar"><button type="button" class="menu-button" id="menuButton" aria-label="Abrir canais">☰</button><span class="channel-hash" id="channelIcon">#</span><div class="channel-details"><strong id="channelTitle">geral</strong><span id="channelSubtitle">Conversa com toda a equipe</span></div><div class="topbar-right"><span class="header-live"><span class="online-dot"></span> Ao vivo</span><button type="button" class="members-button" id="membersButton" title="Ver participantes">♙ <span id="onlineCount">0</span></button></div></header>
-      <div class="conversation" id="conversation"><div class="welcome"><div class="welcome-icon">#</div><div class="eyebrow">BEM-VINDO AO CANAL</div><h1 id="welcomeTitle"># geral</h1><p id="welcomeText">Este é o começo da conversa. Compartilhe uma ideia ou diga olá para a equipe!</p></div><div id="messages" class="messages" role="log" aria-live="polite"></div></div>
-      <div class="composer-area"><div class="typing" id="typing" aria-live="polite"></div><form id="messageForm" class="composer"><span class="composer-plus">＋</span><input id="messageInput" maxlength="1000" autocomplete="off" placeholder="Enviar mensagem para #geral" aria-label="Sua mensagem" required><button type="submit" class="send-button" aria-label="Enviar mensagem" title="Enviar mensagem">➤</button></form><div class="composer-hint"><span>Converse, compartilhe e colabore em tempo real.</span><span>↵ para enviar</span></div></div>
+      <header class="topbar"><button type="button" class="menu-button" id="menuButton"
+          aria-label="Abrir canais">☰</button><span class="channel-hash" id="channelIcon">#</span>
+        <div class="channel-details"><strong id="channelTitle">geral</strong><span id="channelSubtitle">Conversa com
+            toda a equipe</span></div>
+        <div class="topbar-right"><span class="header-live"><span class="online-dot"></span> Ao vivo</span><button
+            type="button" class="members-button" id="membersButton" title="Ver participantes">♙ <span
+              id="onlineCount">0</span></button></div>
+      </header>
+      <div class="conversation" id="conversation">
+        <div class="welcome">
+          <div class="welcome-icon">#</div>
+          <div class="eyebrow">BEM-VINDO AO CANAL</div>
+          <h1 id="welcomeTitle"># geral</h1>
+          <p id="welcomeText">Este é o começo da conversa. Compartilhe uma ideia ou diga olá para a equipe!</p>
+        </div>
+        <div id="messages" class="messages" role="log" aria-live="polite"></div>
+      </div>
+      <div class="composer-area">
+        <div class="typing" id="typing" role="status" aria-live="polite" aria-atomic="true"></div>
+        <form id="messageForm" class="composer"><button type="button" id="attachButton" class="composer-tool"
+            title="Anexar imagem ou arquivo" aria-label="Anexar arquivo">📎</button><button type="button"
+            id="recordButton" class="composer-tool" title="Gravar áudio" aria-label="Gravar mensagem de voz"
+            aria-pressed="false">🎙</button><button type="button" id="emojiButton" class="composer-tool"
+            title="Adicionar emoji" aria-label="Adicionar emoji">☺</button><input id="messageInput" maxlength="1000"
+            autocomplete="off" placeholder="Enviar mensagem para #geral" aria-label="Sua mensagem"><button type="submit"
+            class="send-button" aria-label="Enviar mensagem" title="Enviar mensagem">➤</button></form>
+        <div id="recordingStatus" class="recording-status" hidden><span id="recordingText">Gravando…</span><button
+            type="button" id="cancelRecording">Cancelar</button></div>
+        <div id="attachmentPreview" class="attachment-preview" hidden></div>
+        <div id="emojiPicker" class="emoji-picker" hidden></div><input type="file" id="attachmentInput"
+          accept="image/png,image/jpeg,image/gif,image/webp,.pdf,.txt,.csv,.zip,.docx,.xlsx" hidden><input type="file"
+          id="avatarInput" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
+        <div class="composer-hint"><span>Converse, compartilhe e colabore em tempo real.</span><span>↵ para
+            enviar</span></div>
+      </div>
     </main>
-    <aside class="members" id="membersPanel"><div class="members-head"><span>PARTICIPANTES</span><button type="button" id="closeMembers" aria-label="Fechar participantes">×</button></div><div class="member-summary"><span class="online-dot"></span> ONLINE — <span id="membersCount">0</span></div><div id="membersList" class="members-list"></div><div class="members-footer">Clique em um participante para conversar no privado.</div></aside>
+    <aside class="members" id="membersPanel">
+      <div class="members-head"><span>PARTICIPANTES</span><button type="button" id="closeMembers"
+          aria-label="Fechar participantes">×</button></div>
+      <div class="member-summary"><span class="online-dot"></span> ONLINE — <span id="membersCount">0</span></div>
+      <div id="membersList" class="members-list"></div>
+      <div class="members-footer">Clique em um participante para conversar no privado.</div>
+    </aside>
   </div>
-  <div class="overlay" id="nameOverlay"><form class="login-card" id="nameForm"><div class="login-logo">✦</div><div class="eyebrow">EMPRESA XYZ • WORKSPACE</div><h2>Bem-vindo ao <em>Conecta.</em></h2><p>Um lugar para sua equipe conversar, criar e se conectar. Como podemos chamar você?</p><label for="nameInput">SEU NOME</label><input id="nameInput" autocomplete="nickname" maxlength="24" placeholder="Ex.: Ana Silva" required><div class="form-error" id="nameError" aria-live="polite"></div><button class="join-button" type="submit">Entrar no workspace <span>↗</span></button><small>Ao entrar, suas mensagens ficam visíveis para os participantes da sala.</small></form></div>
+  <div class="overlay" id="nameOverlay">
+    <form class="login-card" id="nameForm">
+      <div class="login-logo">✦</div>
+      <div class="eyebrow">EMPRESA XYZ • WORKSPACE</div>
+      <h2>Bem-vindo ao <em>Conecta.</em></h2>
+      <p>Um lugar para sua equipe conversar, criar e se conectar. Como podemos chamar você?</p><label
+        for="nameInput">SEU NOME</label><input id="nameInput" autocomplete="nickname" maxlength="24"
+        placeholder="Ex.: Ana Silva" required>
+      <div class="form-error" id="nameError" aria-live="polite"></div><button class="join-button" type="submit">Entrar
+        no workspace <span>↗</span></button><small>Ao entrar, suas mensagens ficam visíveis para os participantes da
+        sala.</small>
+    </form>
+  </div>
+  <div class="overlay hidden" id="groupOverlay">
+    <form class="login-card" id="groupForm">
+      <div class="eyebrow">CONVERSA EM EQUIPE</div>
+      <h2>Novo grupo</h2><label for="groupName">NOME DO GRUPO</label><input id="groupName" maxlength="48" required
+        placeholder="Ex.: Equipe de desenvolvimento">
+      <p>Selecione os participantes online:</p>
+      <div id="groupPeople" class="group-people"></div>
+      <div class="modal-buttons"><button type="button" id="cancelGroup">Cancelar</button><button class="join-button"
+          type="submit">Criar grupo</button></div>
+    </form>
+  </div>
   <div class="toast" id="toast" role="status"></div>
+  <div class="image-lightbox" id="imageLightbox" hidden role="dialog" aria-modal="true"
+    aria-label="Visualização de imagem"><button type="button" class="lightbox-close" id="lightboxClose"
+      aria-label="Fechar imagem">×</button><img id="lightboxImage" alt="Imagem ampliada">
+    <div id="lightboxCaption" class="lightbox-caption"></div>
+  </div>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/app.js" defer></script>
 </body>
+
 </html>
