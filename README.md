@@ -46,3 +46,7 @@ Se você já tem mensagens no projeto antigo, **pare o servidor** e copie o arqu
 - Clique no nome do outro participante, envie mensagem privada e confirme que só os dois a recebem.
 - Recarregue as páginas e confirme que o histórico aparece no mesmo lado.
 - Abra `http://localhost:3000/health` e confirme `{"ok":true}`.
+
+## LINK OFICIAL DO SITE
+
+https://chatxyz-hump.onrender.com/
