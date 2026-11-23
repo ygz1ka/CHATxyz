@@ -16,6 +16,9 @@ let activePeer = null;
 let activeGroup = null;
 let groups = [];
 let profileAvatar = null;
+let selectedLoginPhoto = null;
+let loginPhotoObjectUrl = null;
+let avatarToSaveAfterJoin = null;
 let pendingAttachment = null;
 let uploading = false;
 let joined = false;
@@ -48,7 +51,7 @@ function updateTyping() {
   for (const [id, value] of typingUsers) if (value.expires < now) typingUsers.delete(id);
   const users = [...typingUsers.values()].map(value => value.name);
   const excerpt = users.slice(0, 2).join(', ') + (users.length > 2 ? ` e mais ${users.length - 2}` : '');
-  $('typing').textContent = users.length ? `✎ ${excerpt} ${users.length === 1 ? 'está' : 'estão'} digitando...` : '';
+  $('typing').textContent = users.length ? `${excerpt} ${users.length === 1 ? 'está' : 'estão'} digitando...` : '';
   if (!users.length && typingCleanupTimer) {
     clearInterval(typingCleanupTimer); typingCleanupTimer = null;
   }
@@ -81,7 +84,7 @@ function renderGroups() {
   if (!groups.length) { const el=document.createElement('span'); el.className='private-help'; el.textContent='Crie um grupo para conversar com a equipe.'; list.append(el); }
   for (const g of groups) {
     const btn=document.createElement('button');btn.type='button';btn.className='private-contact'+(activeGroup?.id===g.id?' active':'');
-    btn.textContent='♟  '+g.name;btn.addEventListener('click',()=>openGroup(g));list.append(btn);
+    btn.append(window.conectaIcon('users'),document.createTextNode(g.name));btn.addEventListener('click',()=>openGroup(g));list.append(btn);
   }
 }
 function isMyMessage(data) {
@@ -121,7 +124,7 @@ function addMessage(data) {
     } else if ((data.attachment.mime || '').startsWith('audio/')) {
       const audio=document.createElement('audio');audio.className='message-audio';audio.controls=true;audio.preload='none';audio.src=data.attachment.url;audio.setAttribute('aria-label','Mensagem de voz de '+data.name);body.append(audio);
     } else {
-      const a=document.createElement('a');a.className='message-file';a.href=data.attachment.url;a.download=data.attachment.filename||'arquivo';a.textContent='📄 '+(data.attachment.filename||'Baixar arquivo');body.append(a);
+      const a=document.createElement('a');a.className='message-file';a.href=data.attachment.url;a.download=data.attachment.filename||'arquivo';a.append(window.conectaIcon('file-text'),document.createTextNode(data.attachment.filename||'Baixar arquivo'));body.append(a);
     }
   }
   row.append(avatar, body);
@@ -129,14 +132,14 @@ function addMessage(data) {
 }
 function renderHeader() {
   if (activeGroup) {
-    $('channelIcon').textContent = '♟';
+    $('channelIcon').replaceChildren(window.conectaIcon('users'));
     $('channelTitle').textContent=activeGroup.name;
     $('channelSubtitle').textContent='Grupo • '+activeGroup.members.length+' participantes';
     $('welcomeTitle').textContent=activeGroup.name;
     $('welcomeText').textContent='Conversa compartilhada entre os participantes do grupo.';
     $('messageInput').placeholder='Mensagem para '+activeGroup.name;
   } else if (activePeer) {
-    $('channelIcon').textContent = '✉';
+    $('channelIcon').replaceChildren(window.conectaIcon('message-circle'));
     $('channelTitle').textContent = activePeer.name;
     $('channelSubtitle').textContent = onlineUsers.some(u => u.id === activePeer.id) ? 'Conversa privada • online' : 'Conversa privada • offline';
     $('welcomeTitle').textContent = activePeer.name;
@@ -144,7 +147,7 @@ function renderHeader() {
     $('messageInput').placeholder = `Mensagem privada para ${activePeer.name}`;
   } else {
     const room = rooms[activeRoom];
-    $('channelIcon').textContent = '#';
+    $('channelIcon').replaceChildren(window.conectaIcon('hash'));
     $('channelTitle').textContent = room.name;
     $('channelSubtitle').textContent = room.description;
     $('welcomeTitle').textContent = '# ' + room.name;
@@ -220,6 +223,7 @@ function enterCurrent() {
     setOnline(response.online || onlineUsers);
     syncGroups(response.groups);
     if (response.profile) {profileAvatar=response.profile.avatar;setAvatar($('profileAvatar'),name,profileAvatar);}
+    if (avatarToSaveAfterJoin) { const avatar=avatarToSaveAfterJoin; avatarToSaveAfterJoin=null; socket.timeout(8000).emit('update profile',{avatar},(err,r)=>{if(err||!r?.ok){toast(r?.error||'Não foi possível salvar a foto.');return;}profileAvatar=avatar;setAvatar($('profileAvatar'),name,avatar);}); }
     (Array.isArray(response.history) ? response.history : []).forEach(addMessage);
     if (peer && response.peerName && peer.name !== response.peerName) { activePeer.name = response.peerName; knownPeers[peer.id] = response.peerName; savePeers(); renderHeader(); }
     scrollDown(); $('messageInput').focus();
@@ -236,12 +240,37 @@ function openPrivate(peer) {
 }
 function openGroup(group) { if (!group?.id) return;stopTyping();activePeer=null;activeGroup={...group};++joinVersion;resetView();enterCurrent(); }
 function showLogin() { $('nameInput').value = name; $('nameOverlay').classList.remove('hidden'); }
-$('nameForm').addEventListener('submit', event => {
-  event.preventDefault(); const next = $('nameInput').value.trim().slice(0, 24);
-  if (!next) { $('nameError').textContent = 'Digite seu nome para continuar.'; return; }
-  $('nameError').textContent = ''; name = next; sessionStorage.setItem('xyz-name', name);
-  $('profileName').textContent = name; setAvatar($('profileAvatar'),name,profileAvatar);
-  $('nameOverlay').classList.add('hidden'); enterCurrent();
+$('loginPhotoInput').addEventListener('change', event => {
+  const file = event.target.files?.[0];
+  if (loginPhotoObjectUrl) URL.revokeObjectURL(loginPhotoObjectUrl);
+  loginPhotoObjectUrl=null; selectedLoginPhoto=null;
+  const preview=$('loginPhotoPreview');preview.replaceChildren(window.conectaIcon('user-round'));
+  if (!file) return;
+  if (!['image/jpeg','image/png','image/gif','image/webp'].includes(file.type) || file.size>5*1024*1024) {
+    $('nameError').textContent='Selecione uma imagem JPG, PNG, GIF ou WebP de até 5 MB.';
+    event.target.value=''; return;
+  }
+  $('nameError').textContent='';selectedLoginPhoto=file;
+  loginPhotoObjectUrl=URL.createObjectURL(file);
+  const image=document.createElement('img');image.src=loginPhotoObjectUrl;image.alt='Prévia da foto escolhida';preview.replaceChildren(image);
+});
+$('nameForm').addEventListener('submit', async event => {
+  event.preventDefault(); const next=$('nameInput').value.trim().slice(0,24);
+  if(!next){$('nameError').textContent='Digite seu nome para continuar.';return;}
+  if(!socket.connected){$('nameError').textContent='Sem conexão com o servidor. Tente novamente.';return;}
+  const button=$('nameForm').querySelector('button[type="submit"]');
+  button.disabled=true;$('nameError').textContent='';
+  try {
+    if (selectedLoginPhoto) {
+      const uploaded=await uploadFile(selectedLoginPhoto);
+      avatarToSaveAfterJoin=uploaded.url;
+      selectedLoginPhoto=null;
+    }
+    name=next;sessionStorage.setItem('xyz-name',name);
+    $('profileName').textContent=name;setAvatar($('profileAvatar'),name,avatarToSaveAfterJoin||profileAvatar);
+    $('nameOverlay').classList.add('hidden');enterCurrent();
+  } catch(error) { $('nameError').textContent=error.message||'Não foi possível enviar a foto.'; }
+  finally {button.disabled=false;}
 });
 $('editName').addEventListener('click', showLogin);
 $('roomList').addEventListener('click', event => { const btn = event.target.closest('[data-room]'); if (btn) setRoom(btn.dataset.room); });
@@ -322,7 +351,7 @@ let cancellingRecording=false;
 function recordingUI(active) {
   $('recordButton').classList.toggle('recording',active);
   $('recordButton').setAttribute('aria-pressed',String(active));
-  $('recordButton').textContent=active?'■':'🎙';
+  $('recordButton').replaceChildren(window.conectaIcon(active?'x':'mic'));
   $('recordButton').title=active?'Parar gravação':'Gravar áudio';
   $('recordingStatus').hidden=!active;
 }
@@ -369,7 +398,7 @@ $('recordButton').addEventListener('click',toggleRecording);
 $('cancelRecording').addEventListener('click',()=>{if(recorder?.state==='recording'){cancellingRecording=true;recorder.stop();}});
 
 // Ferramentas de anexos, emojis, grupos e perfis.
-function renderAttachmentPreview(){const el=$('attachmentPreview');el.replaceChildren();el.hidden=!pendingAttachment;if(!pendingAttachment)return;const label=document.createElement('span');label.textContent='📎 '+pendingAttachment.filename;const remove=document.createElement('button');remove.type='button';remove.textContent='✕';remove.title='Remover anexo';remove.onclick=()=>{pendingAttachment=null;renderAttachmentPreview();};el.append(label,remove);}
+function renderAttachmentPreview(){const el=$('attachmentPreview');el.replaceChildren();el.hidden=!pendingAttachment;if(!pendingAttachment)return;const label=document.createElement('span');label.append(window.conectaIcon('paperclip'),document.createTextNode(pendingAttachment.filename));const remove=document.createElement('button');remove.type='button';remove.append(window.conectaIcon('x'));remove.title='Remover anexo';remove.onclick=()=>{pendingAttachment=null;renderAttachmentPreview();};el.append(label,remove);}
 async function uploadFile(file){
   if(!file)return null;
   if(file.size>5*1024*1024)throw Error('O limite por arquivo é 5 MB.');
