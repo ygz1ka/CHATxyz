@@ -66,3 +66,7 @@ Sintaxe JS verificada com `node --check`. **Não foi possível completar `npm ci
 - Funciona mesmo quando dois participantes possuem o mesmo nome, pois o indicador vem do socket e não usa uma comparação simples por nome.
 - O indicador é retirado ao enviar, sair do campo, mudar de conversa, desconectar ou ficar sem digitar. Também possui expiração automática caso um evento de parada se perca.
 - Para testar, abra o chat em dois navegadores com perfis diferentes e digite sem enviar. Não aparece para a própria pessoa.
+
+## LINK OFICIAL SITE
+
+https://chatxyz-hump.onrender.com
