@@ -1,0 +1,24 @@
+{
+  "geral": [
+    {
+      "id": "740e666e-a147-4f47-90a8-bb4df20c619b",
+      "name": "Ygor",
+      "message": "oi",
+      "roomId": "geral",
+      "time": "2026-11-23T13:31:59.033Z",
+      "senderId": "_AmB5tOATm5jILBkAAAA",
+      "senderClientId": "b7a9b788-6843-41f6-be32-7f9b91b8128a"
+    },
+    {
+      "id": "9a25b271-dfc6-4df6-bb04-13096ed8623c",
+      "name": "Matheus",
+      "message": "Oi",
+      "roomId": "geral",
+      "time": "2026-11-23T13:32:48.360Z",
+      "senderId": "5D_0b2HJChESje7wAAAB",
+      "senderClientId": "user_v6heh9q27atl6lmh4o1qmjjaz4o7txq8o91w412sekhfnezpkk6qug"
+    }
+  ],
+  "projetos": [],
+  "avisos": []
+}
